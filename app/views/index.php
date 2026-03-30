@@ -55,7 +55,7 @@
     <?php endforeach; ?>
 
     <section class="mb-5 py-4 bg-light rounded-5 px-4">
-        <h2 class="fw-bold mb-5 text-center">🏷️ Thương hiệu đối tác</h2>
+        <h2 class="fw-bold mb-5 text-center">Thương hiệu đối tác</h2>
 
         <div class="swiper brandSwiper pb-4">
             <div class="swiper-wrapper align-items-center">

@@ -4,6 +4,24 @@ $routes->post('/login', 'HomeController@login');
 $routes->post('/register', 'HomeController@register');
 $routes->get('/logout', 'HomeController@logout');
 
+$routes->get('/camera-quan-sat/{slug}', 'ProductsController@login');
+$routes->get('/cart', 'CartsController@index');
+$routes->post('/add-to-cart', 'CartsController@addToCart');
+$routes->post('/cart/update-quantity', 'CartsController@updateQuantity');
+$routes->post('/cart/remove-item', 'CartsController@removeFromCart');
+$routes->post('/cart/prepare-checkout', 'CartsController@prepareCheckout');
+$routes->post('/cart/checkout', 'CartsController@checkout');
+
+$routes->get('/orders', 'OrdersController@index');
+$routes->post('/orders/cancel', 'OrdersController@cancel');
+
+$routes->get('/payments/{slug}', 'PaymentsController@index');
+$routes->post('/payments/cancel', 'PaymentsController@cancel');
+$routes->get('/payments/check-status', 'PaymentsController@checkStatus');
+
+$routes->get('/api/webhook/bank', 'WebhooksController@handle');
+$routes->post('/api/webhook/bank', 'WebhooksController@handle');
+
 $routes->group('/admin', ['middleware' => ['auth', 'admin']], function ($routes) {
     $routes->get('/dashboard', 'admin/AdminDashboardsController@index');
     $routes->post('/change', 'admin/AdminDashboardsController@change');
