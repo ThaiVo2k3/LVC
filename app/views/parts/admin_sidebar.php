@@ -40,7 +40,7 @@ $current = $segment[1] ?? "";
       <li>
         <a href="/admin/dashboard"
           class="flex items-center gap-3 px-3 py-2 rounded
-           <?= $current === 'dashboards' ? 'bg-blue-100 text-blue-600 font-semibold' : 'hover:bg-gray-100' ?>">
+           <?= $current === 'dashboard' ? 'bg-blue-100 text-blue-600 font-semibold' : 'hover:bg-gray-100' ?>">
           <i class="fa-solid fa-chart-line"></i>
           Tổng quan
         </a>
@@ -56,6 +56,15 @@ $current = $segment[1] ?? "";
            <?= $current === 'brands' ? 'bg-blue-100 text-blue-600 font-semibold' : 'hover:bg-gray-100' ?>">
           <i class="fa-solid fa-layer-group"></i>
           Hãng
+        </a>
+      </li>
+
+      <li>
+        <a href="/admin/categories"
+          class="flex items-center gap-3 px-3 py-2 rounded
+           <?= $current === 'categories' ? 'bg-blue-100 text-blue-600 font-semibold' : 'hover:bg-gray-100' ?>">
+          <i class="fa-solid fa-list"></i>
+          Danh mục
         </a>
       </li>
       <li>

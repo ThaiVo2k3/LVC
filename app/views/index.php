@@ -42,7 +42,7 @@
                                 <p class="text-danger fw-bold fs-5 mb-3">
                                     <?php echo number_format($p['price']); ?> <u class="small">đ</u>
                                 </p>
-                                <a href="/product/<?php echo $p['id']; ?>"
+                                <a href="<?php echo urlSanPham($p['name'], $p['id']); ?>"
                                     class="btn btn-<?php echo $sec['btn']; ?> mt-auto rounded-3 py-2 fw-semibold transition shadow-sm">
                                     Chi tiết
                                 </a>

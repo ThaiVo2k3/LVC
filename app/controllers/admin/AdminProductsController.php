@@ -4,22 +4,26 @@ class AdminProductsController extends BaseController
     private $fileService;
     private $productModel;
     private $brandModel;
+    private $categoryModel;
     public function __construct()
     {
 
         $this->fileService = new FileUploadService();
         $this->productModel = new product();
         $this->brandModel = new brand();
+        $this->categoryModel = new category();
     }
     public function index()
     {
         $products = $this->productModel->getAllproduct();
         $brands = $this->brandModel->getAllbrand();
+        $categories = $this->categoryModel->getAllcategory();
         $this->renderView('admin/products', [
             'title' => 'Danh sách sản phẩm',
             'layout' => 'admin',
             'products' => $products,
-            'brands' => $brands
+            'brands' => $brands,
+            'categories' => $categories
         ]);
     }
     public function get($id)
@@ -61,24 +65,24 @@ class AdminProductsController extends BaseController
         }
         $name = trim($_POST['name'] ?? '');
         $price = trim($_POST['price'] ?? '');
-        $category = trim($_POST['category'] ?? '');
+        $category_id = trim($_POST['category_id'] ?? '');
         $brand_id = trim($_POST['brand_id'] ?? '');
         $camera_resolution = trim($_POST['resolution'] ?? '');
         $camera_fps = trim($_POST['fps'] ?? '');
         $camera_lens = trim($_POST['lens'] ?? '');
 
-        $errors = [];
-
         if ($name === '') {
-            $errors['name'] = "Tên sản phẩm không được để trống";
-        } elseif (mb_strlen($name) < 3) {
-            $errors['name'] = "Tên phải ít nhất 3 ký tự";
-        }
-
-        if (!empty($errors)) {
             echo json_encode([
                 "success" => false,
-                "errors"  => $errors
+                "message" => "Tên danh mục không được để trống"
+            ]);
+            return;
+        }
+
+        if (mb_strlen($name) < 3) {
+            echo json_encode([
+                "success" => false,
+                "message" => "Tên phải ít nhất 3 ký tự"
             ]);
             return;
         }
@@ -86,7 +90,7 @@ class AdminProductsController extends BaseController
         $data = [
             "name" => $name,
             "price" => $price,
-            "category" => $category,
+            "category_id" => $category_id,
             "brand_id" => $brand_id,
             "camera_resolution" => $camera_resolution,
             "camera_fps" => $camera_fps,
@@ -180,25 +184,24 @@ class AdminProductsController extends BaseController
 
         $name = trim($_POST['name'] ?? '');
         $price = trim($_POST['price'] ?? '');
-        $category = trim($_POST['category'] ?? '');
+        $category_id = trim($_POST['category_id'] ?? '');
         $brand_id = trim($_POST['brand_id'] ?? '');
         $camera_resolution = trim($_POST['resolution'] ?? '');
         $camera_fps = trim($_POST['fps'] ?? '');
         $camera_lens = trim($_POST['lens'] ?? '');
 
-        $errors = [];
-
-        // Validate name
         if ($name === '') {
-            $errors['name'] = "Tên sản phẩm không được để trống";
-        } elseif (mb_strlen($name) < 3) {
-            $errors['name'] = "Tên phải ít nhất 3 ký tự";
-        }
-
-        if (!empty($errors)) {
             echo json_encode([
                 "success" => false,
-                "errors"  => $errors
+                "message" => "Tên danh mục không được để trống"
+            ]);
+            return;
+        }
+
+        if (mb_strlen($name) < 3) {
+            echo json_encode([
+                "success" => false,
+                "message" => "Tên phải ít nhất 3 ký tự"
             ]);
             return;
         }
@@ -206,7 +209,7 @@ class AdminProductsController extends BaseController
             "name" => $name,
             "image" => $imgName,
             "price" => $price,
-            "category" => $category,
+            "category_id" => $category_id,
             "brand_id" => $brand_id,
             "camera_resolution" => $camera_resolution,
             "camera_fps" => $camera_fps,

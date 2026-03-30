@@ -1,21 +1,21 @@
 <?php
-class AdminBrandsController extends BaseController
+class AdminCategoriesController extends BaseController
 {
     private $fileService;
-    private $brandModel;
+    private $categoryModel;
     public function __construct()
     {
 
         $this->fileService = new FileUploadService();
-        $this->brandModel = new brand();
+        $this->categoryModel = new category();
     }
     public function index()
     {
-        $brands = $this->brandModel->getAllbrand();
-        $this->renderView('admin/brands', [
-            'title' => 'Danh sách hãng sản xuất',
+        $categories = $this->categoryModel->getAllcategory();
+        $this->renderView('admin/categories', [
+            'title' => 'Danh sách danh mục',
             'layout' => 'admin',
-            'brands' => $brands
+            'categories' => $categories
         ]);
     }
     public function get($id)
@@ -29,12 +29,12 @@ class AdminBrandsController extends BaseController
             ]);
             return;
         }
-        $res = $this->brandModel->getbrandById($id);
+        $res = $this->categoryModel->getcategoryById($id);
         if (!$res) {
             echo json_encode([
                 "success" => false,
                 "error" => "Not found",
-                "message" => "Không tìm thấy hãng sản xuất"
+                "message" => "Không tìm thấy danh mục"
             ]);
             return;
         }
@@ -56,11 +56,10 @@ class AdminBrandsController extends BaseController
             return;
         }
         $name = trim($_POST['name'] ?? '');
-
         if ($name === '') {
             echo json_encode([
                 "success" => false,
-                "message" => "Tên hãng sản xuất không được để trống"
+                "message" => "Tên danh mục không được để trống"
             ]);
             return;
         }
@@ -74,42 +73,12 @@ class AdminBrandsController extends BaseController
         }
 
         $data = [
-            "name" => $name,
-            "image" => null
+            "name" => $name
         ];
-        $this->brandModel->addbrand($data);
-        $id = $this->brandModel->lastID();
-        $uploadDir = "public/uploads/brands/$id/";
-        $imgName = null;
-        if (!empty($_FILES['image']['name'])) {
-            $validation = $this->fileService->validateFile($_FILES['image']);
-            if (!$validation['valid']) {
-                $this->brandModel->deletebrand($id);
-                echo json_encode([
-                    "success" => false,
-                    "error"   => "Validation failed",
-                    "message" => $validation['error']
-                ]);
-                return;
-            }
-            $uploadResult = $this->fileService->uploadFile($_FILES['image'], $uploadDir);
-            if (!$uploadResult['success']) {
-                $this->brandModel->deletebrand($id);
-                echo json_encode([
-                    "success" => false,
-                    "error"   => "Upload failed",
-                    "message" => $uploadResult['error']
-                ]);
-                return;
-            }
-            $imgName = $uploadResult['fileName'];
-            $this->brandModel->updatebrand(["image" => $imgName], $id);
-        }
+        $this->categoryModel->addcategory($data);
         echo json_encode([
             "success" => true,
-            "message" => "Thêm hãng sản xuất thành công",
-            "id"      => $id,
-            "image"   => $imgName
+            "message" => "Thêm danh mục thành công",
         ]);
     }
     public function update($id)
@@ -124,51 +93,37 @@ class AdminBrandsController extends BaseController
             return;
         }
 
-        $old = $this->brandModel->getbrandById($id);
+        $old = $this->categoryModel->getcategoryById($id);
         if (!$old) {
             echo json_encode([
                 "success" => false,
                 "error" => "Not found",
-                "message" => "Không tìm thấy hãng sản xuất có ID = $id"
+                "message" => "Không tìm thấy danh mục có ID = $id"
             ]);
             return;
         }
-        $oldImg = $old['image'];
-        $uploadDir = "public/uploads/brands/$id/";
-        $imgName = $oldImg;
-        if (!empty($_FILES['anh_new']['name'])) {
-            $validation = $this->fileService->validateFile($_FILES['anh_new']);
-            if (!$validation['valid']) {
-                echo json_encode([
-                    "success" => false,
-                    "error"   => "Validation failed",
-                    "message" => $validation['error']
-                ]);
-                return;
-            }
-            $uploadResult = $this->fileService->uploadFile(
-                $_FILES['anh_new'],
-                $uploadDir,
-                $oldImg
-            );
-            if (!$uploadResult['success']) {
-                echo json_encode([
-                    "success" => false,
-                    "error"   => "Upload failed",
-                    "message" => $uploadResult['error']
-                ]);
-                return;
-            }
-            $imgName = $uploadResult['fileName'];
-        }
 
         $name = trim($_POST['name'] ?? '');
+        if ($name === '') {
+            echo json_encode([
+                "success" => false,
+                "message" => "Tên danh mục không được để trống"
+            ]);
+            return;
+        }
+
+        if (mb_strlen($name) < 3) {
+            echo json_encode([
+                "success" => false,
+                "message" => "Tên phải ít nhất 3 ký tự"
+            ]);
+            return;
+        }
         $data = [
             "name" => $name,
-            "image" => $imgName
         ];
 
-        $ok = $this->brandModel->updatebrand($data, $id);
+        $ok = $this->categoryModel->updatecategory($data, $id);
         echo json_encode([
             "success" => $ok ? true : false,
             "error"   => $ok ? null : "Update failed",
@@ -187,17 +142,17 @@ class AdminBrandsController extends BaseController
             return;
         }
 
-        $old = $this->brandModel->getbrandById($id);
+        $old = $this->categoryModel->getcategoryById($id);
         if (!$old) {
             echo json_encode([
                 "success" => false,
                 "error" => "Not found",
-                "message" => "Không tìm thấy hãng sản xuất"
+                "message" => "Không tìm thấy danh mục"
             ]);
             return;
         }
-        $uploadDir = "public/uploads/brands/$id/";
-        $ok = $this->brandModel->deletebrand($id);
+        $uploadDir = "public/uploads/categories/$id/";
+        $ok = $this->categoryModel->deletecategory($id);
         if ($ok) {
             if (!empty($old['image'])) {
                 $this->fileService->deleteFile($uploadDir . $old['image']);
@@ -207,7 +162,7 @@ class AdminBrandsController extends BaseController
         echo json_encode([
             "success" => $ok ? true : false,
             "error"   => $ok ? null : "Delete failed",
-            "message" => $ok ? "Xóa hãng sản xuất thành công" : "Xóa thất bại"
+            "message" => $ok ? "Xóa danh mục thành công" : "Xóa thất bại"
         ]);
     }
 }

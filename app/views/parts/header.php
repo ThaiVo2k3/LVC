@@ -13,14 +13,14 @@ $user_name = isset($_SESSION['user']['name']) ? $_SESSION['user']['name'] : null
 
         <!-- Logo -->
         <a href="/" class="d-flex align-items-center gap-2">
-            <!-- <img src="/public/uploads/logo.png" class="h-10"> -->
-            <span class="fw-bold text-xl text-blue-600">LVC Store</span>
+            <img src="/public/uploads/logo.jpg" class="h-10" alt="Logo">
         </a>
 
         <!-- Menu -->
         <nav class="d-none d-lg-block">
             <ul class="d-flex gap-4 list-unstyled m-0">
                 <li><a href="/" class="text-dark text-decoration-none hover:text-blue-500">Trang chủ</a></li>
+                <li><a href="/camera-quan-sat" class="text-dark text-decoration-none hover:text-blue-500">sản phẩm</a></li>
                 <li><a href="#" class="text-dark text-decoration-none hover:text-blue-500">Giới thiệu</a></li>
                 <li><a href="#" class="text-dark text-decoration-none hover:text-blue-500">Liên hệ</a></li>
             </ul>
@@ -45,10 +45,17 @@ $user_name = isset($_SESSION['user']['name']) ? $_SESSION['user']['name'] : null
                 </span>
             </a>
 
-            <!-- User -->
             <div>
                 <?php if ($user_name): ?>
-                    <span class="fw-semibold"><?php echo $user_name; ?></span>
+                    <?php
+                    $redirectUrl = ($_SESSION['user']['role'] === 'admin')
+                        ? '/admin/dashboard'
+                        : '/';
+                    ?>
+                    <a href="<?= $redirectUrl ?>" class="fw-semibold text-decoration-none">
+                        <?= $user_name; ?>
+                    </a>
+
                     <a href="/logout" class="btn btn-outline-danger btn-sm ms-2">Đăng xuất</a>
                 <?php else: ?>
                     <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>

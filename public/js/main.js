@@ -35,18 +35,7 @@ function handleServerResponse(json) {
   });
 }
 function handleError(err) {
-  if (err?.errors) {
-    const firstError = Object.values(err.errors)[0];
-    showAlert({ error: firstError });
-    return;
-  }
-
-  if (err?.message) {
-    showAlert({ error: err.message });
-    return;
-  }
-
-  showAlert({ error: "Có lỗi xảy ra!" });
+  showAlert({ error: err?.message || "Có lỗi xảy ra!" });
 }
 function showAlert({ error = null, success = null }) {
   if (error) {

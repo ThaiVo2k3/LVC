@@ -29,7 +29,7 @@ function taoSlug($text)
 
 function urlSanPham($ten, $id)
 {
-    return '/products/' . taoSlug($ten) . '-' . $id;
+    return '/camera-quan-sat/' . taoSlug($ten) . '-' . $id;
 }
 
 function layIdTuSlug($slug)

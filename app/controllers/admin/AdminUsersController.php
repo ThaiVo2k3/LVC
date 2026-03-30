@@ -34,7 +34,7 @@ class AdminUsersController extends BaseController
             echo json_encode([
                 "success" => false,
                 "error" => "Not found",
-                "message" => "Không tìm thấy danh mục"
+                "message" => "Không tìm thấy hãng sản xuất"
             ]);
             return;
         }

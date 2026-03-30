@@ -4,7 +4,9 @@ $routes->post('/login', 'HomeController@login');
 $routes->post('/register', 'HomeController@register');
 $routes->get('/logout', 'HomeController@logout');
 
-$routes->get('/camera-quan-sat/{slug}', 'ProductsController@login');
+$routes->get('/camera-quan-sat', 'ProductsController@index');
+$routes->get('/camera-quan-sat/{slug}', 'ProductsController@detail');
+
 $routes->get('/cart', 'CartsController@index');
 $routes->post('/add-to-cart', 'CartsController@addToCart');
 $routes->post('/cart/update-quantity', 'CartsController@updateQuantity');
@@ -31,6 +33,12 @@ $routes->group('/admin', ['middleware' => ['auth', 'admin']], function ($routes)
     $routes->get('/brands/get/{id}', 'admin/AdminBrandsController@get');
     $routes->post('/brands/update/{id}', 'admin/AdminBrandsController@update');
     $routes->post('/brands/delete/{id}', 'admin/AdminBrandsController@delete');
+
+    $routes->get('/categories', 'admin/AdminCategoriesController@index');
+    $routes->post('/categories/add', 'admin/AdminCategoriesController@add');
+    $routes->get('/categories/get/{id}', 'admin/AdminCategoriesController@get');
+    $routes->post('/categories/update/{id}', 'admin/AdminCategoriesController@update');
+    $routes->post('/categories/delete/{id}', 'admin/AdminCategoriesController@delete');
 
     $routes->get('/products', 'admin/AdminProductsController@index');
     $routes->post('/products/add', 'admin/AdminProductsController@add');

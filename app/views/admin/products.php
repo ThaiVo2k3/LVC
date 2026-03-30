@@ -20,7 +20,7 @@
                     <th>Tên</th>
                     <th>Giá</th>
                     <th>Ảnh</th>
-                    <th>danh mục</th>
+                    <th>Danh mục</th>
                     <th>Hãng</th>
                     <th class="text-end">Thao tác</th>
                 </tr>
@@ -37,13 +37,12 @@
                                 <img
                                     src="/public/uploads/products/<?= e($product['id']) ?>/<?= e($product['image']) ?>"
                                     alt="<?= e($product['name']) ?>"
-                                    class="rounded border"
-                                    style="width:180px;height:60px;object-fit:cover;">
+                                    class="w-[120px] h-[60px] object-contain bg-gray-100 rounded border p-1">
                             <?php else: ?>
                                 <span class="text-muted">Không có</span>
                             <?php endif; ?>
                         </td>
-                        <td><?= e($product['category']) ?></td>
+                        <td><?= e($product['category_name']) ?></td>
                         <td><?= e($product['brand_name']) ?></td>
 
                         <td class="text-end">
@@ -91,10 +90,11 @@
                                 <option value="<?= $brand['id'] ?>"><?= e($brand['name']) ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <select name="category" class="form-control" required>
+                        <select name="category_id" class="form-control" required>
                             <option value="">--danh mục--</option>
-                            <option value="Camera">Camera loại 1</option>
-                            <option value="Action Cam">Camera loại 2</option>
+                            <?php foreach ($categories as $category): ?>
+                                <option value="<?= $category['id'] ?>"><?= e($category['name']) ?></option>
+                            <?php endforeach; ?>
                         </select>
                         <textarea type="text" name="description" class="form-control" placeholder="mô tả" require></textarea>
                         <input type="text" name="resolution" class="form-control" placeholder="độ phân giải" required>
@@ -163,14 +163,15 @@
                             <label for="edit_brand_id">Hãng sản xuất</label>
                         </div>
 
-                        <!-- Category -->
+                        <!-- category_id -->
                         <div class="form-floating">
-                            <select id="edit_category" name="category" class="form-select" required>
-                                <option value="">-- Chọn danh mục --</option>
-                                <option value="Camera">Camera loại 1</option>
-                                <option value="Action Cam">Camera loại 2</option>
+                            <select id="edit_category_id" name="category_id" class="form-select" required>
+                                <option value="">-- Chọn sản phẩm --</option>
+                                <?php foreach ($categories as $category): ?>
+                                    <option value="<?= $category['id'] ?>"><?= e($category['name']) ?></option>
+                                <?php endforeach; ?>
                             </select>
-                            <label for="edit_category">Danh mục</label>
+                            <label for="edit_category_id">sản phẩm</label>
                         </div>
 
                         <!-- Description -->
@@ -222,7 +223,7 @@
         document.getElementById("edit_name").value = data.name || "";
         document.getElementById("edit_price").value = data.price || "";
         document.getElementById("edit_brand_id").value = data.brand_id || "";
-        document.getElementById("edit_category").value = data.category || "";
+        document.getElementById("edit_category_id").value = data.category_id || "";
         document.getElementById("edit_description").value = data.description || "";
         document.getElementById("edit_resolution").value = data.camera_resolution || "";
         document.getElementById("edit_fps").value = data.camera_fps || "";
