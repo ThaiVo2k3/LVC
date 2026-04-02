@@ -9,7 +9,7 @@
     <!-- Open Graph cho Facebook & Zalo -->
     <meta property="og:title" content="ThaiVo2k3 - camera quan sát Chính Hãng Giá Tốt">
     <meta property="og:description" content="Chuyên cung cấp camera quan sát chính hãng, giá tốt nhất thị trường. Bảo hành 12 tháng, giao hàng toàn quốc, hỗ trợ trả góp 0%.">
-    <meta property="og:image" content="https://thaivo2k3.id.vn/public/uploads/ogimage.jpg">
+    <meta property="og:image" content="https://thaivo2k3.id.vn/public/uploads/ogimage.png">
     <meta property="og:url" content="https://thaivo2k3.id.vn">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="ThaiVo2k3 camera quan sát">

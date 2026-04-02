@@ -11,7 +11,7 @@ $user_name = isset($_SESSION['user']['name']) ? $_SESSION['user']['name'] : null
 
         <!-- Logo -->
         <a href="/" class="d-flex align-items-center gap-2">
-            <img src="/public/uploads/logo.jpg" class="h-10" alt="Logo">
+            <img src="/public/uploads/logo.png" class="h-16" alt="Logo">
         </a>
 
         <!-- Menu -->
