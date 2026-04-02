@@ -17,9 +17,9 @@ $routes->get('/orders', 'OrdersController@index', ['auth']);
 $routes->get('/orders/detail/{id}', 'OrdersController@detail', ['auth']);
 $routes->post('/orders/cancel/{id}', 'OrdersController@cancel', ['auth']);
 
+$routes->get('/payments/{slug}/check-status', 'PaymentsController@checkStatus');
+$routes->post('/payments/{slug}/cancel', 'PaymentsController@cancel');
 $routes->get('/payments/{slug}', 'PaymentsController@index');
-$routes->post('/payments/cancel', 'PaymentsController@cancel');
-$routes->get('/payments/check-status', 'PaymentsController@checkStatus');
 
 $routes->get('/api/webhook/bank', 'WebhooksController@handle');
 $routes->post('/api/webhook/bank', 'WebhooksController@handle');

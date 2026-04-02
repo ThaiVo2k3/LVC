@@ -127,10 +127,10 @@ $qrUrl = "https://qr.sepay.vn/img?"
     }, 1000);
 
     const polling = setInterval(() => {
-        fetch(`/payments/check-status?code=${orderCode}`)
+        fetch(`/payments/${orderCode}/check-status`)
             .then(res => res.json())
             .then(data => {
-                if (data.message === 'Đã thanh toán') {
+                if (data.success && data.message === 'đã thanh toán') {
                     clearInterval(countdown);
                     clearInterval(polling);
                     updateStatus("✅ Thanh toán thành công!", "success");
@@ -154,7 +154,7 @@ $qrUrl = "https://qr.sepay.vn/img?"
     }
 
     function cancelOrder() {
-        fetch('/payments/cancel', {
+        fetch(`/payments/${orderCode}/cancel`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

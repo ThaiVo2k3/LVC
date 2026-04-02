@@ -127,11 +127,7 @@ class WebhooksController extends BaseController
             $message .= "----------------------\n";
             $items = $this->orderDetailModel->getAllOrder_DetailsByOrder_Id($order['id']);
             foreach ($items as $item) {
-                $product = $this->productModel->getProductById($item['product_id']);
-
-                if (!$product) continue;
-
-                $name = $product['name'];
+                $name = $item['product_name'];
                 $qty = $item['quantity'];
                 $price = $item['price'];
                 $subTotal = $price * $qty;

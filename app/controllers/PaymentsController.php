@@ -8,9 +8,9 @@ class PaymentsController extends BaseController
         $this->orderModel = new Order();
     }
 
-    public function index($slug)
+    public function index($code)
     {
-        $order = $this->orderModel->getOrderByCode($slug);
+        $order = $this->orderModel->getOrderByCode($code);
         if (!$order) {
             $this->renderView('404');
             return;
@@ -33,13 +33,8 @@ class PaymentsController extends BaseController
         ]);
     }
 
-    public function cancel()
+    public function cancel($code)
     {
-        header('Content-Type: application/json');
-
-        $data = json_decode(file_get_contents('php://input'), true);
-        $code = $data['code'] ?? '';
-
         if (!$code) {
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => 'Invalid code']);
@@ -51,7 +46,7 @@ class PaymentsController extends BaseController
             echo json_encode(['success' => false, 'message' => 'not_found']);
             return;
         }
-        if ($order['trang_thai_thanh_toan'] === 'Đã thanh toán') {
+        if ($order['payment_status'] === 'đã thanh toán') {
             echo json_encode(['success' => false, 'message' => 'đã thanh toán']);
             return;
         }
@@ -61,11 +56,8 @@ class PaymentsController extends BaseController
             'status' => 'canceled'
         ]);
     }
-    public function checkStatus()
+    public function checkStatus($code)
     {
-        header('Content-Type: application/json');
-
-        $code = $_GET['code'] ?? '';
         if (!$code) {
             echo json_encode(['success' => false, 'message' => 'Invalid code']);
             return;

@@ -23,7 +23,9 @@ $current = $segment[1] ?? "";
 
 <!-- Sidebar -->
 <aside id="sidebar"
-  class="bg-white border rounded shadow-sm">
+  class="fixed top-0 left-0 h-full w-64 bg-white border shadow-sm
+         transform -translate-x-full lg:translate-x-0
+         transition-transform duration-200 z-50">
   <nav class="px-3 py-4 text-sm">
 
     <!-- DASHBOARD -->

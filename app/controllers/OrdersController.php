@@ -23,7 +23,7 @@ class OrdersController extends BaseController
     }
     public function detail($id)
     {
-        $ok = $this->orderDetailModel->getOrder_DetailsById($id);
+        $ok = $this->orderDetailModel->getAllOrder_DetailsByOrder_Id($id);
         if ($ok) {
             echo json_encode([
                 'success' => true,
@@ -38,6 +38,13 @@ class OrdersController extends BaseController
             echo json_encode([
                 'success' => false,
                 'message' => 'đơn hàng đã hủy'
+            ]);
+            exit();
+        }
+        if ($order['payment_status'] === 'đã thanh toán') {
+            echo json_encode([
+                'success' => false,
+                'message' => 'đơn hàng đã thanh toán'
             ]);
             exit();
         }

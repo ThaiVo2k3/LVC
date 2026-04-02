@@ -31,7 +31,7 @@ class AdminOrdersController extends BaseController
             ]);
             return;
         }
-        $res = $this->order_delailsModel->getOrder_detailsById($id);
+        $res = $this->order_delailsModel->getAllOrder_DetailsByOrder_Id($id);
         if (!$res) {
             echo json_encode([
                 "success" => false,
