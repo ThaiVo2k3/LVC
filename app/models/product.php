@@ -62,22 +62,19 @@ class Product extends CoreModels
          LIMIT $limit"
         );
     }
-
-    /*************  ✨ Windsurf Command ⭐  *************/
-    /**
-     * Lấy sản phẩm theo id
-     * @param int $id id của sản phẩm
-     * @return array|null sản phẩm nếu có, null nếu không có
-     */
-    /*******  3490a1f4-ce03-40b0-97da-bf86cd2c49ca  *******/
     public function getProductByid($id)
     {
         return $this->getOne(
-            "SELECT * FROM {$this->table} WHERE id = :id",
-            ['id' => $id]   // ✅ bind param
+            "SELECT p.*, 
+                b.name AS brand_name,
+                c.name AS category_name
+         FROM {$this->table} p
+         LEFT JOIN brands b ON p.brand_id = b.id
+         LEFT JOIN categories c ON p.category_id = c.id
+         WHERE p.id = :id",
+            ['id' => $id] // bind param
         );
     }
-
     public function getProductBySlug($slug)
     {
         return $this->getOne(
@@ -85,7 +82,25 @@ class Product extends CoreModels
             ['slug' => $slug]
         );
     }
-
+    public function getSameCategoryProducts($category_id, $exclude_id)
+    {
+        return $this->getAll(
+            "SELECT p.*, 
+                b.name AS brand_name,
+                c.name AS category_name
+         FROM {$this->table} p
+         LEFT JOIN brands b ON p.brand_id = b.id
+         LEFT JOIN categories c ON p.category_id = c.id
+         WHERE p.category_id = :id
+         AND p.id != :exclude_id 
+         ORDER BY p.id DESC
+         LIMIT 4",
+            [
+                'id' => $category_id,
+                'exclude_id' => $exclude_id
+            ]
+        );
+    }
     public function filterProducts(
         $search = '',
         $category_id = '',

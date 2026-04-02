@@ -7,15 +7,15 @@ $routes->get('/logout', 'HomeController@logout');
 $routes->get('/camera-quan-sat', 'ProductsController@index');
 $routes->get('/camera-quan-sat/{slug}', 'ProductsController@detail');
 
-$routes->get('/cart', 'CartsController@index');
+$routes->get('/carts', 'CartsController@index');
 $routes->post('/add-to-cart', 'CartsController@addToCart');
 $routes->post('/cart/update-quantity', 'CartsController@updateQuantity');
 $routes->post('/cart/remove-item', 'CartsController@removeFromCart');
-$routes->post('/cart/prepare-checkout', 'CartsController@prepareCheckout');
 $routes->post('/cart/checkout', 'CartsController@checkout');
 
-$routes->get('/orders', 'OrdersController@index');
-$routes->post('/orders/cancel', 'OrdersController@cancel');
+$routes->get('/orders', 'OrdersController@index', ['auth']);
+$routes->get('/orders/detail/{id}', 'OrdersController@detail', ['auth']);
+$routes->post('/orders/cancel/{id}', 'OrdersController@cancel', ['auth']);
 
 $routes->get('/payments/{slug}', 'PaymentsController@index');
 $routes->post('/payments/cancel', 'PaymentsController@cancel');

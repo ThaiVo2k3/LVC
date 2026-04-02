@@ -55,8 +55,8 @@
 
                             <button
                                 class="btn btn-sm btn-danger"
-                                data-action="delete"
-                                data-name="<?= e($brand['name']) ?>"
+                                data-action="action"
+                                data-name="xóa <?= e($brand['name']) ?>"
                                 data-url="/admin/brands/delete/<?= $brand['id'] ?>">
                                 <i class="fa-solid fa-trash"></i>
                             </button>

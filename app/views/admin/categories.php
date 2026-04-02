@@ -42,8 +42,8 @@
 
                             <button
                                 class="btn btn-sm btn-danger"
-                                data-action="delete"
-                                data-name="<?= e($category['name']) ?>"
+                                data-action="action"
+                                data-name="xóa <?= e($category['name']) ?>"
                                 data-url="/admin/categories/delete/<?= $category['id'] ?>">
                                 <i class="fa-solid fa-trash"></i>
                             </button>

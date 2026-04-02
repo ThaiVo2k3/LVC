@@ -23,18 +23,19 @@ window.addEventListener("DOMContentLoaded", () => {
     showAlert({ success });
   }
 });
-function handleServerResponse(json) {
-  showAlert({
+async function handleServerResponse(json) {
+  await showAlert({
     success: json.message || "Thành công!",
-  }).then(() => {
-    if (json.redirect) {
-      window.location.href = json.redirect;
-    } else if (json.reload !== false) {
-      location.reload();
-    }
   });
+
+  if (json.redirect) {
+    window.location.href = json.redirect;
+  } else if (json.reload !== false) {
+    location.reload();
+  }
 }
 function handleError(err) {
+  console.error("FULL ERROR:", err);
   showAlert({ error: err?.message || "Có lỗi xảy ra!" });
 }
 function showAlert({ error = null, success = null }) {
@@ -44,7 +45,9 @@ function showAlert({ error = null, success = null }) {
   if (success) {
     return Toast.fire("Thành công", success, "success");
   }
+  return Promise.resolve();
 }
+
 document.addEventListener("submit", async (e) => {
   const form = e.target.closest(".form-post");
   if (!form) return;
@@ -78,8 +81,6 @@ document.addEventListener("click", async (e) => {
     if (window[callbackName]) {
       window[callbackName](json.data || json);
     }
-
-    document.getElementById(popupId)?.classList.remove("hidden");
   } catch (err) {
     showAlert({ error: err.message || "Không lấy được dữ liệu!" });
   }
@@ -104,18 +105,18 @@ if (formEdit) {
   });
 }
 document.addEventListener("click", async (e) => {
-  const btn = e.target.closest('[data-action="delete"]');
+  const btn = e.target.closest('[data-action="action"]');
   if (!btn) return;
 
   const url = btn.dataset.url;
   const name = btn.dataset.name || "";
 
   const result = await Swal.fire({
-    title: "Xác nhận xóa?",
-    text: `Bạn có chắc muốn xóa "${name}" không?`,
+    title: "Xác nhận?",
+    text: `Bạn có chắc muốn ${name} không?`,
     icon: "warning",
     showCancelButton: true,
-    confirmButtonText: "Xóa",
+    confirmButtonText: "xác nhận",
     cancelButtonText: "Hủy",
     reverseButtons: true,
   });
@@ -135,13 +136,10 @@ document.addEventListener("click", async (e) => {
 
 async function fetchJSON(url, options = {}) {
   const res = await fetch(url, options);
-
   const text = await res.text();
   console.log("RAW RESPONSE:", text);
 
   let json;
-
-  // Chỉ bắt lỗi parse
   try {
     json = JSON.parse(text);
   } catch (err) {
@@ -149,13 +147,8 @@ async function fetchJSON(url, options = {}) {
     throw new Error("Server không trả JSON hợp lệ");
   }
 
-  // Sau khi parse thành công mới xử lý logic
-  if (!res.ok) {
-    throw json;
-  }
-
-  if (json.success === false) {
-    throw json; // vẫn throw đúng lỗi validate
+  if (!res.ok || json.success === false) {
+    throw new Error(json.message || json.error || "Có lỗi từ server");
   }
 
   return json;

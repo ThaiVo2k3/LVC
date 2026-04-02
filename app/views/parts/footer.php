@@ -12,11 +12,12 @@
 
                     <input type="text" name="sodienthoai"
                         class="form-control"
-                        placeholder="Số điện thoại" required>
+                        placeholder="Số điện thoại"
+                        autocomplete="username" required>
 
                     <input type="password" name="matkhau"
                         class="form-control"
-                        placeholder="Mật khẩu" required>
+                        placeholder="Mật khẩu" autocomplete="current-password" required>
 
                 </div>
 
@@ -43,10 +44,10 @@
                 <div class="modal-body space-y-3">
 
                     <input type="text" name="ho_ten" class="form-control" placeholder="Họ tên" required>
-                    <input type="text" name="so_dien_thoai" class="form-control" placeholder="SĐT" required>
-                    <input type="email" name="email" class="form-control" placeholder="Email">
-                    <input type="password" name="mat_khau" class="form-control" placeholder="Mật khẩu" required>
-                    <input type="password" name="xac_nhan" class="form-control" placeholder="Nhập lại mật khẩu" required>
+                    <input type="text" name="so_dien_thoai" class="form-control" placeholder="SĐT" autocomplete="username" required>
+                    <input type="email" name="email" class="form-control" placeholder="Email" autocomplete="email" required>
+                    <input type="password" name="mat_khau" class="form-control" placeholder="Mật khẩu" autocomplete="current-password" required>
+                    <input type="password" name="xac_nhan" class="form-control" placeholder="Nhập lại mật khẩu" autocomplete="current-password" required>
 
                 </div>
 

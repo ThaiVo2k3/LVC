@@ -4,6 +4,7 @@ class WebhooksController extends BaseController
 {
     protected $paymentModel;
     protected $orderModel;
+    private $orderDetailModel;
     private $userModel;
     private $telegramService;
     private $productModel;
@@ -13,6 +14,7 @@ class WebhooksController extends BaseController
 
         $this->paymentModel = new Payment();
         $this->orderModel = new Order();
+        $this->orderDetailModel = new Order_Details();
         $this->userModel = new User();
         $this->telegramService = new TelegramService();
         $this->productModel = new Product();
@@ -26,7 +28,7 @@ class WebhooksController extends BaseController
         if (($headers['Authorization'] ?? '') !== 'Apikey voquocthai2k3abcxyz') {
             http_response_code(401);
             echo json_encode([
-                'status' => 'unauthorized',
+                'success' => false,
                 'message' => 'Invalid API key'
             ]);
             return;
@@ -36,106 +38,120 @@ class WebhooksController extends BaseController
         if (!is_object($data)) {
             http_response_code(400);
             echo json_encode([
-                'status' => 'error',
+                'success' => false,
                 'message' => 'No data'
             ]);
             return;
         }
 
-        $maGiaoDich = $data->referenceCode ?? '';
-        $noiDung    = trim($data->content ?? '');
-        $soTien     = (int)($data->transferAmount ?? 0);
+        $transaction_code = $data->referenceCode ?? '';
+        $content    = trim($data->content ?? '');
+        $amount     = (int)($data->transferAmount ?? 0);
 
-        preg_match('/\bDH[A-Z0-9]{8}\b/', $noiDung, $matches);
-
+        preg_match('/\bDH[A-Z0-9]{8}\b/i', $content, $matches);
 
         if (empty($matches)) {
             echo json_encode([
-                'status' => 'ignored',
+                'success' => false,
                 'message' => 'Không tìm thấy mã đơn hàng trong nội dung'
             ]);
             return;
         }
 
-        $maDonHang = $matches[0];
+        $code = $matches[0];
 
-        $donHang = $this->orderModel->getOrderByCode($maDonHang);
+        $order = $this->orderModel->getOrderByCode($code);
 
-        if (!$donHang) {
+        if (!$order) {
             echo json_encode([
-                'status' => 'ignored',
+                'success' => false,
                 'message' => 'Không tìm thấy đơn hàng'
             ]);
             return;
         }
 
-        if ($donHang['trang_thai_thanh_toan'] === 'Đã thanh toán') {
+        if ($order['payment_status'] === 'đã thanh toán') {
             echo json_encode([
-                'status' => 'duplicate',
+                'success' => false,
                 'message' => 'Đơn hàng đã được thanh toán'
             ]);
             return;
         }
-
-        if ($this->paymentModel->isDuplicateTransaction($maGiaoDich)) {
+        $payment = $this->paymentModel->getPaymentBytransaction_code($transaction_code);
+        if ($payment) {
             echo json_encode([
-                'status' => 'duplicate',
+                'success' => false,
                 'message' => 'Giao dịch đã xử lý'
             ]);
             return;
         }
-        $nguoiDungId = $donHang['nguoi_dung_id'];
+        $total_price = (int)$order['total_price'];
 
-        $ok = $this->paymentModel->addPayment([
-            'nguoi_dung_id' => $nguoiDungId,
-            'so_tien'       => $soTien,
-            'ma_giao_dich'  => $maGiaoDich,
-            'noi_dung'      => $noiDung,
-            'nguoi_gui'     => $data->accountNumber ?? '',
-            'thoi_gian'     => date('Y-m-d H:i:s')
-        ]);
-        if ($ok) {
-            $nguoiDung = $this->userModel->getUserById($nguoiDungId);
-            $hoTen = $nguoiDung['ho_ten'];
-            $message =
-                "<b>🛒 NHẬN TIỀN</b>\n" .
-                "Mã đơn hàng: <b>$maDonHang</b>\n" .
-                "Họ tên: <b>$hoTen</b>\n" .
-                "Số tiền: <b>+ " . number_format($soTien) . "đ</b>";
-
-            $this->telegramService->send($message);
-        }
-        $tongTienDonHang = (int)$donHang['tong_tien'];
-
-        if ($soTien !== $tongTienDonHang) {
+        if ($amount !== $total_price) {
             echo json_encode([
-                'status' => 'mismatch',
+                'success' => false,
                 'message' => 'Số tiền không khớp',
-                'so_tien_bank' => $soTien,
-                'tong_tien_don_hang' => $tongTienDonHang
+                'so_tien_bank' => $amount,
+                'tong_tien_don_hang' => $total_price
             ]);
             return;
         }
-        $ok = $this->orderModel->markAsPaid($donHang['don_hang_id']);
+        $user_id = $order['user_id'];
+        $user = $this->userModel->getUserById($user_id);
+        $user_name = $user['name'];
+        $data_insert = [
+            'user_id' => $user_id,
+            'amount'       => $amount,
+            'transaction_code'  => $transaction_code,
+            'content'      => $content,
+            'sender_name'     => $data->accountNumber ?? '',
+            'request_time'     => date('Y-m-d H:i:s')
+        ];
+        $ok = $this->paymentModel->addPayment($data_insert);
         if ($ok) {
-            $sanPham = $this->productModel->getProductById($donHang['san_pham_id']);
-            $tenSanPham = $sanPham['ten_san_pham'];
-            $soLuong = $donHang['so_luong'];
-            $tongTien = $donHang['tong_tien'];
             $message =
-                "<b>🛒 ĐƠN HÀNG MỚI</b>\n" .
-                "Mã đơn: <b>$maDonHang</b>\n" .
-                "Sản phẩm: $tenSanPham\n" .
-                "Số lượng: $soLuong\n" .
-                "Tổng tiền: <b>" . number_format($tongTien) . "đ (đã thanh toán)</b>";
+                "<b>🛒 NHẬN TIỀN</b>\n" .
+                "Mã đơn hàng: <b>$code</b>\n" .
+                "Họ tên: <b>$user_name</b>\n" .
+                "Số tiền: <b>+ " . number_format($amount) . "đ</b>";
+
+            $this->telegramService->send($message);
+        }
+
+        $ok = $this->orderModel->updateOrder(['payment_status' => 'đã thanh toán'], $order['id']);
+        if ($ok) {
+
+            $message = "<b>🛒 ĐƠN HÀNG MỚI</b>\n";
+            $message .= "Mã đơn: <b>$code</b>\n";
+            $message .= "Người đặt: <b>$user_name</b>\n";
+            $message .= "----------------------\n";
+            $items = $this->orderDetailModel->getAllOrder_DetailsByOrder_Id($order['id']);
+            foreach ($items as $item) {
+                $product = $this->productModel->getProductById($item['product_id']);
+
+                if (!$product) continue;
+
+                $name = $product['name'];
+                $qty = $item['quantity'];
+                $price = $item['price'];
+                $subTotal = $price * $qty;
+
+                $message .= "• Sản phẩm: $name\n";
+                $message .= "  SL: $qty | Đơn giá: " . number_format($price) . "đ\n";
+                $message .= "  Thành tiền: " . number_format($subTotal) . "đ\n";
+                $message .= "----------------------\n";
+            }
+
+            $message .= "Tổng đơn: <b>" . number_format($order['total_price']) . "đ</b>\n";
+            $message .= "Địa chỉ: $order[address]\n";
 
             $this->telegramService->send($message);
         }
         echo json_encode([
-            'status' => 'success',
+            'success' => true,
             'message' => 'Thanh toán thành công',
-            'don_hang_id' => $donHang['don_hang_id'],
-            'so_tien' => $soTien
+            'id' => $order['id'],
+            'amount' => $amount
         ]);
     }
 }

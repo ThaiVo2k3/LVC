@@ -70,14 +70,16 @@ class ProductsController extends BaseController
             exit('Sản phẩm không tồn tại');
         }
         $product = $this->productModel->getProductById($id);
-
+        $sameCategoryProducts = $this->productModel->getSameCategoryProducts($product['category_id'], $product['id']);
         if (!$product) {
             exit('Sản phẩm không tồn tại');
         }
+
         $this->renderView('details', [
             'title' => 'Chi tiết sản phẩm',
             'layout' => 'main',
-            'product' => $product
+            'product' => $product,
+            'sameCategoryProducts' => $sameCategoryProducts
         ]);
     }
 }

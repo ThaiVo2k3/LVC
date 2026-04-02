@@ -1,9 +1,7 @@
 <?php
 $cart_count = 0;
 if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
-    foreach ($_SESSION['cart'] as $qty) {
-        $cart_count += (int)$qty;
-    }
+    $cart_count = count($_SESSION['cart'] ?? []);
 }
 
 $user_name = isset($_SESSION['user']['name']) ? $_SESSION['user']['name'] : null;
@@ -30,7 +28,7 @@ $user_name = isset($_SESSION['user']['name']) ? $_SESSION['user']['name'] : null
         <div class="d-flex align-items-center gap-3">
 
             <!-- Search -->
-            <form method="GET" class="d-flex">
+            <form method="GET" action="/camera-quan-sat" class="d-flex">
                 <input type="search" name="search"
                     class="form-control rounded-start-pill"
                     placeholder="Tìm kiếm...">
@@ -38,10 +36,11 @@ $user_name = isset($_SESSION['user']['name']) ? $_SESSION['user']['name'] : null
             </form>
 
             <!-- Cart -->
-            <a href="/cart" class="position-relative text-dark text-xl">
+            <a href="/carts" class="position-relative text-dark text-xl">
                 🛒
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    <?php echo (int)$cart_count; ?>
+                <span id="cart-count"
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    <?= (int)$cart_count ?>
                 </span>
             </a>
 
@@ -50,7 +49,7 @@ $user_name = isset($_SESSION['user']['name']) ? $_SESSION['user']['name'] : null
                     <?php
                     $redirectUrl = ($_SESSION['user']['role'] === 'admin')
                         ? '/admin/dashboard'
-                        : '/';
+                        : '/orders';
                     ?>
                     <a href="<?= $redirectUrl ?>" class="fw-semibold text-decoration-none">
                         <?= $user_name; ?>

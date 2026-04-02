@@ -32,7 +32,13 @@ class Payment extends CoreModels
             ['id' => $id]
         );
     }
-
+    public function getPaymentBytransaction_code($code)
+    {
+        return $this->getOne(
+            "SELECT * FROM {$this->table} WHERE transaction_code = :transaction_code",
+            ['transaction_code' => $code]
+        );
+    }
     public function getPaymentByPhone($phone)
     {
         return $this->getOne(

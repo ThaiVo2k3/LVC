@@ -16,6 +16,19 @@ class Order extends CoreModels
         );
     }
 
+    public function getAllOrderByUser($user_id)
+    {
+        return $this->getAll(
+            "SELECT 
+            p.*,
+            b.name AS user_name 
+        FROM {$this->table} p
+        LEFT JOIN users b ON p.user_id = b.id
+        WHERE p.user_id = ?
+        ORDER BY p.id DESC",
+            [$user_id]
+        );
+    }
     public function getOrderById($id)
     {
         return $this->getOne(
@@ -23,7 +36,13 @@ class Order extends CoreModels
             ['id' => $id]
         );
     }
-
+    public function getOrderByCode($code)
+    {
+        return $this->getOne(
+            "SELECT * FROM {$this->table} WHERE code = :code",
+            ['code' => $code]
+        );
+    }
     public function updateOrder($data, $id)
     {
         return $this->update(
@@ -43,6 +62,7 @@ class Order extends CoreModels
     }
     public function addOrder($data)
     {
-        return $this->insert($this->table, $data);
+        $this->insert($this->table, $data);
+        return $this->lastID();
     }
 }

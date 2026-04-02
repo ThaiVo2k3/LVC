@@ -69,7 +69,7 @@ class Router
     {
         $defaultPatterns = [
             'id'   => '\d+',
-            'slug' => '[a-z0-9-]+'
+            'slug' => '[A-Za-z0-9-]+'
         ];
 
         return "#^" . preg_replace_callback(

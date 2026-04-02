@@ -22,17 +22,9 @@ $current = $segment[1] ?? "";
   class="fixed inset-0 bg-black/40 z-40 hidden lg:hidden"></div>
 
 <!-- Sidebar -->
-<aside
-  id="sidebar"
-  class="
-    fixed top-0 left-0 z-50
-    w-64 h-screen
-    bg-white border-r
-    transform -translate-x-full
-    transition-transform duration-300
-    lg:translate-x-0
-  ">
-  <nav class="h-full overflow-y-auto px-4 py-6 text-sm">
+<aside id="sidebar"
+  class="bg-white border rounded shadow-sm">
+  <nav class="px-3 py-4 text-sm">
 
     <!-- DASHBOARD -->
     <h3 class="text-xs font-semibold text-gray-400 mb-2">DASHBOARD</h3>

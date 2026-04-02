@@ -1,7 +1,7 @@
 <?php
 class Order_Details extends CoreModels
 {
-    private $table = 'Order_Details';
+    private $table = 'order_details';
     public function __construct()
     {
         parent::__construct();
@@ -11,7 +11,7 @@ class Order_Details extends CoreModels
         return $this->getAll("SELECT * FROM {$this->table} ORDER BY id DESC");
     }
 
-    public function getOrder_DetailsById($id)
+    public function getAllOrder_DetailsByOrder_Id($id)
     {
 
         return $this->getAll(
