@@ -127,13 +127,13 @@ class WebhooksController extends BaseController
             $message .= "----------------------\n";
             $items = $this->orderDetailModel->getAllOrder_DetailsByOrder_Id($order['id']);
             foreach ($items as $item) {
-                $name = $item['product_name'];
-                $qty = $item['quantity'];
-                $price = $item['price'];
+                $name = htmlspecialchars($item['product_name'] ?? 'Không rõ');
+                $qty = (int)$item['quantity'];
+                $price = (int)$item['price'];
                 $subTotal = $price * $qty;
 
-                $message .= "• Sản phẩm: $name\n";
-                $message .= "  SL: $qty | Đơn giá: " . number_format($price) . "đ\n";
+                $message .= "• Sản phẩm: {$name}\n";
+                $message .= "  SL: {$qty} | Đơn giá: " . number_format($price) . "đ\n";
                 $message .= "  Thành tiền: " . number_format($subTotal) . "đ\n";
                 $message .= "----------------------\n";
             }
